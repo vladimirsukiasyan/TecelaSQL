@@ -1,14 +1,7 @@
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/steady_timer.hpp>
-#include <chrono>
-#include <thread>
-#include <iostream>
-#include "Server/Server.h"
+#include "src/Server/Server.h"
 
-using namespace boost::asio;
-
-int main()
-{
+int main(int argc, char **argv) {
+    //TODO добавить возможность передачи файла конфигурации сервера
+    //port, poolSize и прочее
     Server().start();
-    return 0;
 }
