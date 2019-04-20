@@ -6,7 +6,6 @@
 #define TECELASQL_APPLICATION_H
 
 
-#include <boost/asio/detail/shared_ptr.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include "../Command/Command.h"
 #include "../Socket/Socket.h"

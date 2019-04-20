@@ -8,7 +8,7 @@
 #include <string>
 #include <boost/asio/io_service.hpp>
 #include <boost/thread/thread_pool.hpp>
-#include "../ThreadManager/ThreadManager.h"
+//#include "../ThreadManager/ThreadManager.h"
 #include "../Application/Application.h"
 
 #define DEFAULT_PORT 12000

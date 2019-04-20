@@ -6,7 +6,6 @@ find_package(Boost REQUIRED COMPONENTS system filesystem  )
 add_executable(TecelaSQL
         Server/Server.cpp
         Server/Server.h
-        client/main.cpp
         Socket/Socket.cpp
         Socket/Socket.h
         HashTable/HashTable.h
