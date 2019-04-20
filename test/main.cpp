@@ -5,7 +5,7 @@
 TEST(basic_check, test_eq){
     EXPECT_EQ(0,1);
 }
-TEST(TestHashTable, HashTable){
+TEST(UnitTest, HashTable){
     HashTable<int, int> table;
     EXPECT_TRUE(table.Add(1120,11,10));
     EXPECT_TRUE(table.Has(1120));

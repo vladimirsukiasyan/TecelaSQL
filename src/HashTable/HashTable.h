@@ -8,8 +8,12 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 const size_t DEFAULT_SIZE = 8;
+
+template <typename K>
+size_t Hash(const K &key, size_t size);
 
 template<typename K, typename V>
 struct HashNode {
@@ -26,8 +30,6 @@ struct HashNode {
     int lifetime;
     HashNode<K, V> *next;
 };
-
-size_t Hash(const std::string &s, size_t size);
 
 template<typename K, typename V>
 class HashTable {
@@ -67,7 +69,7 @@ bool HashTable<K, V>::Has(const K &key) {
 template<typename K, typename V>
 bool HashTable<K, V>::Add(const K &key, const V &value, int lifetime) {
 
-    size_t hash = Hash(key, value, table.size());
+    size_t hash = Hash(key, table.size());
 
     HashNode<K, V> *node = table[hash];
     while (node != nullptr && node->key != key) {
@@ -126,5 +128,14 @@ HashTable<K, V>::~HashTable() {
 
 }
 
+template <typename K>
+size_t Hash(const K &key, size_t size) {
+    std::string s = std::to_string(key);
+    size_t hash = 0;
+    for (size_t i = 0; i < s.size(); i++) {
+        hash = hash * 73 + s[i];
+    }
+    return hash % size;
+}
 
 #endif //TECELASQL_HASHTABLE_H
