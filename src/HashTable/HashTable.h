@@ -15,23 +15,23 @@ const size_t DEFAULT_SIZE = 8;
 template <typename K>
 size_t Hash(const K &key, size_t size);
 
-template<typename K, typename V>
+template<typename V>
 struct HashNode {
     HashNode() : next(nullptr) {}
 
-    HashNode(const K &key, const V &value, HashNode<K, V> *next, int lifetime)
+    HashNode(const std::string &key, const V &value, HashNode<V> *next, int lifetime)
             : key(key),
               next(next),
               value(value),
               lifetime(lifetime) {}
 
-    K key;
+    std::string key;
     V value;
     int lifetime;
-    HashNode<K, V> *next;
+    HashNode<V> *next;
 };
 
-template<typename K, typename V>
+template<typename V>
 class HashTable {
 public:
     explicit HashTable(size_t size = DEFAULT_SIZE)
@@ -39,26 +39,26 @@ public:
 
     ~HashTable();
 
-    bool Add(const K &key, const V &data, int lifetime);
+    bool Add(const std::string &key, const V &data, int lifetime);
 
-    bool Delete(const K &key);
+    bool Delete(const std::string &key);
 
-    bool Has(const K &key);
+    bool Has(const std::string &key);
 
-    int GetLifetime(const K &key);
+    int GetLifetime(const std::string &key);
 
 private:
-    std::vector<HashNode<K, V> *> table;
+    std::vector<HashNode<V> *> table;
     size_t size;
     size_t lifetime;
 };
 
 
-template<typename K, typename V>
-bool HashTable<K, V>::Has(const K &key) {
+template<typename V>
+bool HashTable<V>::Has(const std::string &key) {
     size_t hash = Hash(key, table.size());
 
-    HashNode<K, V> *node = table[hash];
+    HashNode<V> *node = table[hash];
     while (node != nullptr && node->key != key) {
         node = node->next;
     }
@@ -66,12 +66,12 @@ bool HashTable<K, V>::Has(const K &key) {
     return node != nullptr;
 }
 
-template<typename K, typename V>
-bool HashTable<K, V>::Add(const K &key, const V &value, int lifetime) {
+template<typename V>
+bool HashTable<V>::Add(const std::string &key, const V &value, int lifetime) {
 
     size_t hash = Hash(key, table.size());
 
-    HashNode<K, V> *node = table[hash];
+    HashNode<V> *node = table[hash];
     while (node != nullptr && node->key != key) {
         node = node->next;
     }
@@ -79,17 +79,17 @@ bool HashTable<K, V>::Add(const K &key, const V &value, int lifetime) {
     if (node != nullptr)
         return false;
 
-    table[hash] = new HashNode<K, V>(key, value, table[hash], lifetime);
+    table[hash] = new HashNode<V>(key, value, table[hash], lifetime);
     size++;
     return true;
 }
 
-template<typename K, typename V>
-bool HashTable<K, V>::Delete(const K &key) {
+template<typename V>
+bool HashTable<V>::Delete(const std::string &key) {
     size_t hash = Hash(key, table.size());
 
-    HashNode<K, V> *prevNode = nullptr;
-    HashNode<K, V> *node = table[hash];
+    HashNode<V> *prevNode = nullptr;
+    HashNode<V> *node = table[hash];
     while (node != nullptr && node->key != key) {
         prevNode = node;
         node = node->next;
@@ -109,11 +109,11 @@ bool HashTable<K, V>::Delete(const K &key) {
     return true;
 }
 
-template<typename K, typename V>
-int HashTable<K, V>::GetLifetime(const K &key) {
+template<typename V>
+int HashTable<V>::GetLifetime(const std::string &key) {
     size_t hash = Hash(key, table.size());
 
-    HashNode<K, V> *node = table[hash];
+    HashNode<V> *node = table[hash];
     while (node != nullptr && node->key != key) {
         node = node->next;
     }
@@ -123,17 +123,14 @@ int HashTable<K, V>::GetLifetime(const K &key) {
 }
 
 
-template<typename K, typename V>
-HashTable<K, V>::~HashTable() {
+template<typename V>
+HashTable<V>::~HashTable() {
 
 }
-
-template <typename K>
-size_t Hash(const K &key, size_t size) {
-    std::string s = std::to_string(key);
+size_t Hash(const std::string &key, size_t size) {
     size_t hash = 0;
-    for (size_t i = 0; i < s.size(); i++) {
-        hash = hash * 73 + s[i];
+    for (size_t i = 0; i < key.size(); i++) {
+        hash = hash * 73 + key[i];
     }
     return hash % size;
 }

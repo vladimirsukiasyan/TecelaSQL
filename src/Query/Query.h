@@ -4,7 +4,8 @@
 
 #ifndef TECELASQL_QUERY_H
 #define TECELASQL_QUERY_H
-
+#include <string>
+#include "../Command/Command.h"
 
 class Query {
 public:
