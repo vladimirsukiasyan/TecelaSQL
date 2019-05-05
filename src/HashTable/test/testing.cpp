@@ -4,34 +4,37 @@
 #include <gtest/gtest.h>
 #include "../HashTable.h"
 
-TEST(HashTable, Add){
-    HashTable<int> table;
-    EXPECT_TRUE(table.Add("1",11,10));
-    EXPECT_TRUE(table.Add("2",12,11));
-    EXPECT_FALSE(table.Add("1",11,10));
-    EXPECT_FALSE(table.Add("2",12,11));
+TEST(HashTable, Add) {
+    HashTable table;
+    EXPECT_TRUE(table.Add("1", 11, 10, 0x62ff78));
+    EXPECT_TRUE(table.Add("2", 12, 11, 0x63ff78));
+    EXPECT_FALSE(table.Add("1", 11, 10, 0x62ff78));
+    EXPECT_FALSE(table.Add("2", 12, 11, 0x63ff78));
 
 }
-TEST(HashTable, Delete){
-    HashTable<int> table;
+
+TEST(HashTable, Delete) {
+    HashTable table;
     EXPECT_FALSE(table.Delete("1"));
-    table.Add("1",11,10);
+    table.Add("1", 11, 10, 0x62ff78);
     EXPECT_TRUE(table.Delete("1"));
     EXPECT_FALSE(table.Delete("1"));
 }
-TEST(HashTable, Has){
-    HashTable<int> table;
+
+TEST(HashTable, Has) {
+    HashTable table;
     EXPECT_FALSE(table.Has("1"));
-    table.Add("1", 11, 10);
+    table.Add("1", 11, 10, 0x62ff78);
     EXPECT_TRUE(table.Has("1"));
     EXPECT_FALSE(table.Has("2"));
 }
-TEST(HashTable, GetLifeTime){
-    HashTable<int> table;
-    table.Add("1",11,10);
-    EXPECT_EQ(table.GetLifetime("1"),10);
-    table.Add("212", 11,1212);
-    EXPECT_EQ(table.GetLifetime("212"),1212);
+
+TEST(HashTable, GetLifeTime) {
+    HashTable table;
+    table.Add("1", 11, 10, 0x62ff78);
+    EXPECT_EQ(table.GetLifetime("1"), 10);
+    table.Add("212", 11, 1212, 0x63ff78);
+    EXPECT_EQ(table.GetLifetime("212"), 1212);
 }
 
 int main(int argc, char **argv) {
