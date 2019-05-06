@@ -80,6 +80,41 @@ long long HashTable::GetLifetime(const std::string &key) {
     return node->exptime;
 }
 
+std::string HashTable::Get(const std::string &key) {
+    size_t hash = Hash(key, table.size());
+
+    HashNode *node = table[hash];
+    while (node != nullptr && node->key != key) {
+        node = node->next;
+    }
+
+    if (node == nullptr)
+        return "error";
+
+    else {
+        std::string s ="Key: " + node->key + " length: " + std::to_string(node->length) +" exptime: " + std::to_string(node->exptime) + " value: " + (char*)node->value;
+        return s;
+    }
+}
+
+bool HashTable::Set(const std::string &key, long long exptime, long long length, std::byte *value) {
+    size_t hash = Hash(key, table.size());
+
+    HashNode *node = table[hash];
+    while (node != nullptr && node->key != key) {
+        node = node->next;
+    }
+
+    if (node == nullptr)
+        return false;
+    else{
+        node->exptime = exptime;
+        node->length = length;
+        node->value = value;
+        return true;
+    }
+
+}
 
 //TODO double hashing realization in add, del, has
 size_t Hash1(const std::string &s, size_t size) {

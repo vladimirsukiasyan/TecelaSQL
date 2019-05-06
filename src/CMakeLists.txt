@@ -25,13 +25,13 @@ add_executable(TecelaSQL
         Command/DisconnectCommand/DisconnetCommand.h
         Command/FlushAllCommand/FlushAllCommand.cpp
         Command/FlushAllCommand/FlushAllCommand.h
-        Command/GetTTLCommand/GetTTLCommand.cpp
-        Command/GetTTLCommand/GetTTLCommand.h
+        Command/GetCommand/GetCommand.cpp
+        Command/GetCommand/GetCommand.h
         Command/IncrCommand/IncrCommand.cpp
         Command/IncrCommand/IncrCommand.h
         Command/SetCommand/SetCommand.cpp
         Command/SetCommand/SetCommand.h
-        CacheManager/CacheManager.cpp CacheManager/CacheManager.h HashTable/test/testing.cpp HashTable/HashTable.cpp HashTable/HashNode.h)
+        CacheManager/CacheManager.cpp CacheManager/CacheManager.h HashTable/test/testing.cpp HashTable/HashTable.cpp HashTable/HashNode.h utils.h Command/TouchCommand/TouchCommand.cpp Command/TouchCommand/TouchCommand.h)
 
 target_link_libraries (TecelaSQL
         ${CMAKE_THREAD_LIBS_INIT}

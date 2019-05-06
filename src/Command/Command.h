@@ -6,6 +6,9 @@
 #define TECELASQL_COMMAND_H
 
 #include <map>
+#include <utility>
+#include <cstddef>
+#include "../utils.h"
 
 class Command {
 public:

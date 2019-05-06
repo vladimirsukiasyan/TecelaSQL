@@ -3,3 +3,14 @@
 //
 
 #include "DeleteCommand.h"
+
+void DeleteCommand::execute() {
+    std::mutex mx_;
+    std::lock_guard<std::mutex> lock(mx_);
+    bool success = pTable->Delete(this->key);
+    if (success) {
+        std::string s = "Успешно удалено";
+        client_socket->send(s);
+    } else
+        throw InvalidTextLineException();
+}
