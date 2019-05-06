@@ -6,20 +6,34 @@
 #define TECELASQL_APPLICATION_H
 
 
-#include <boost/asio/detail/shared_ptr.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include <iostream>
+#include "../utils.h"
 #include "../Command/Command.h"
-#include "../Socket/Socket.h"
 #include "../Query/Query.h"
 
-typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;
-
 class Application {
-    Command *command;
+
+    //TODO можно enum of state(CommandLineReceived,DataLineReceived) сделать
     Query *query;
+    Command *command;
 
 public:
-    void request_handler(socket_ptr sock);
+
+    Application():
+        query(new Query()),
+        command(nullptr)
+        {
+            std::cout<<"Application()"<<std::endl;
+
+        }
+
+    ~Application(){
+        std::cout<<"~Application()"<<std::endl;
+
+        delete query;
+        delete command;
+    }
+    void requestHandler(const std::string&);
 };
 
 

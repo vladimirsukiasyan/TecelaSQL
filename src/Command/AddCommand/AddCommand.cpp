@@ -10,3 +10,7 @@ void AddCommand::execute() {
     //на CacheManager для установки timer
     //и прочие команды
 }
+
+void AddCommand::setValue(std::byte *value) {
+    this->value=value;
+}

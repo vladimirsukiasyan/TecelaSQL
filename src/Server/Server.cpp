@@ -2,42 +2,51 @@
 // Created by vladimir on 07.04.19.
 //
 
-#include <boost/asio/io_service.hpp>
-#include <boost/thread.hpp>
-#include <boost/asio/ip/tcp.hpp>
 #include "Server.h"
-#include "../Socket/Socket.h"
 
-using namespace boost::asio;
+void Server::startAccept() {
+    boost::asio::ip::tcp::acceptor acceptor(
+            _service,
+            boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),port));
+    acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+
+    while (true) {
+        client_ptr client_connection(new ClientConnection(_service));
+        acceptor.accept(client_connection->sock());
+        boost::recursive_mutex::scoped_lock lock (mx_);
+        clients.push_back(client_connection);
+    }
+}
+
 
 void Server::start() {
     //парсим конфиг файл
 
-    ip::tcp::acceptor acceptor(
-            io_service,
-            ip::tcp::endpoint(ip::tcp::v4(),port)
-            );
+    std::cerr << "listen on port: " << port << std::endl;
+    thread_group.create_thread(boost::bind(
+                    &Server::startAccept,
+                    this)
+    );
 
+    for (int i = 0; i < poolSize; ++i)
+        thread_group.create_thread(boost::bind(
+                        &Server::handleClient,
+                        this)
+        );
 
-    while(true){
-        socket_ptr socket(new ip::tcp::socket(io_service));
-        acceptor.accept(*socket);
-        accept_handler(socket);
+    thread_group.join_all();
+}
+
+void Server::handleClient() {
+    while (true) {
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+        boost::lock_guard<boost::mutex> lock(mx_);
+        for (auto client = clients.begin(); client != clients.end(); ++client)
+            (*client)->client_session();
+        // erase clients that timed out
+//        clients.erase(std::remove_if(clients.begin(), clients.end(),
+//                                     boost::bind(&talk_to_client::timed_out,_1)), clients.end());
     }
+
 }
 
-void Server::accept_handler(socket_ptr socket) {
-    app->request_handler(socket);
-}
-
-Server::Server():
-    port(DEFAULT_PORT),
-    poolSize(DEFAULT_POOL_SIZE),
-    app(new Application())
-    {}
-
-void Server::worker_thread(){
-    //запускаем цикл внутри каждого потока, который будет
-    //ждать конца выполнения всех асинхронных задач в рамках конкретного потока
-    io_service.run();
-}

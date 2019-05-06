@@ -5,18 +5,38 @@
 #ifndef TECELASQL_ADDCOMMAND_H
 #define TECELASQL_ADDCOMMAND_H
 
+#include <iostream>
 #include "../Command.h"
+
 
 class AddCommand: public Command{
 public:
-    AddCommand(std::map<std::string, std::string> params){
-        //инициализация команды
-    }
+    //инициализация команды
+    AddCommand(std::string &key,
+               long long exptime,
+               long long length
+               ):
+               key(key),
+               exptime(exptime),
+               length(length),
+               value(nullptr)
+               {
+                   std::cout<<"AddCommand()"<<std::endl;
+               }
 
+   ~AddCommand() override {
+       std::cout<<"~AddCommand()"<<std::endl;
+       delete value;
+    }
     void execute() override;
 
+    void setValue(std::byte *value);
+
 private:
-    std::map<std::string,std::string> params;
+    const std::string key;
+    long long exptime;
+    long long length;
+    std::byte *value;
 };
 
 

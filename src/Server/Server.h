@@ -5,33 +5,46 @@
 #ifndef TECELASQL_SERVER_H
 #define TECELASQL_SERVER_H
 
-#include <string>
-#include <boost/asio/io_service.hpp>
-#include <boost/thread/thread_pool.hpp>
-#include "../ThreadManager/ThreadManager.h"
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+#include <functional>
+#include <iostream>
+
+#include <boost/bind.hpp>
+
+#include "../Socket/ClientConnection.h"
 #include "../Application/Application.h"
+#include "../utils.h"
 
 #define DEFAULT_PORT 12000
-#define DEFAULT_POOL_SIZE 40
+#define DEFAULT_POOL_SIZE 4
 
-typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;
+typedef boost::shared_ptr<ClientConnection> client_ptr;
 
 class Server {
-    std::string configuration;
+    boost::asio::io_service _service;
+    boost::thread_group thread_group;
+    int poolSize; //Strongly recommended init by count of kernels
     int port;
-    int poolSize;
-    boost::asio::io_service io_service;
 
-    Application *app;
+    void handleClient();
+    void startAccept();
 
-    void accept_handler(socket_ptr);
-    void worker_thread();
+    boost::mutex mx_;
+    std::vector<client_ptr> clients;
 public:
-    explicit Server();
+    Server():
+               port(DEFAULT_PORT),
+               poolSize(DEFAULT_POOL_SIZE)
+            {
+                std::cout<<"Server()"<<std::endl;
+            }
 
-    ~Server();
+    ~Server(){
+        std::cout<<"~Server()"<<std::endl;
+    }
+
     void start();
-
 };
 
 
