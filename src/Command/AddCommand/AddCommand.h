@@ -33,6 +33,8 @@ public:
 
     void setValue(std::byte *value);
 
+    std::string toStr();
+
 private:
     const std::string key;
     long long exptime;

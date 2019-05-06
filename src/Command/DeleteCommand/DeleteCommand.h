@@ -17,9 +17,9 @@ class DeleteCommand : public Command {
                   socket_ptr client_socket
     ) :
             key(key),
-            client_socket(client_socket) {}
-
-    ;
+            client_socket(client_socket) {};
+public:
+    std::string toStr();
 
     void execute() override;
 

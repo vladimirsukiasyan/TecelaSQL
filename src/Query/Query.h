@@ -40,6 +40,8 @@ public:
 
     void parseHeadLine(const std::string &headBuffer);
 
+
+
     bool hasToSendBodyLine();
 
     void setCommandValue(const std::string bodyBuffer);

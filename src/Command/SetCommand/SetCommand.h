@@ -26,12 +26,16 @@ class SetCommand : public Command {
         std::cout << "SetCommand" << std::endl;
     }
 
+
     ~SetCommand() {
         std::cout << "~SetCommand" << std::endl;
         delete value;
     }
 
     void execute() override;
+
+public:
+    std::string toStr();
 
     void setValue(std::byte *value);
 

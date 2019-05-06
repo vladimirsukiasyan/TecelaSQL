@@ -13,3 +13,8 @@ void GetCommand::execute() {
     else
         client_socket->send(answer);
 }
+
+std::string GetCommand::toStr() {
+    std::string answer = "Get " + pTable->Get(this->key);
+    return answer;
+}

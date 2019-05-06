@@ -20,6 +20,8 @@ public:
             : key(key),
               client_socket(client_socket) {}
 
+    std::string toStr();
+
     void execute() override;
 
 private:

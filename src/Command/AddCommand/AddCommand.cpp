@@ -19,3 +19,10 @@ void AddCommand::execute() {
     //на CacheManager для установки timer
     //и прочие команды
 }
+
+std::string AddCommand::toStr() {
+    std::string answer =
+            "Add " + this->key + " " + std::to_string(this->exptime) + " " + std::to_string(this->length) + " " +
+            (char *) this->value;
+    return answer;
+}

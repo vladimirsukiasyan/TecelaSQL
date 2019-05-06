@@ -14,3 +14,8 @@ void DeleteCommand::execute() {
     } else
         throw InvalidTextLineException();
 }
+
+std::string DeleteCommand::toStr() {
+    std::string answer = "Del " + pTable->Get(this->key);
+    return answer;
+}
