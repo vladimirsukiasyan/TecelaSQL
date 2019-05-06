@@ -1,19 +1,16 @@
-#include <utility>
-
-#include <utility>
-
 //
-// Created by vladimir on 07.04.19.
+// Created by dmitry on 01.05.19.
 //
-
 #ifndef TECELASQL_HASHTABLE_H
 #define TECELASQL_HASHTABLE_H
 
+#include <cstddef>
+#include <utility>
 #include <string>
 #include <vector>
 #include <map>
-#include <cstddef>
 #include "HashNode.h"
+#include <iostream>
 
 const size_t DEFAULT_SIZE = 8;
 
@@ -32,11 +29,21 @@ public:
              long long exptime,
              long long length,
              std::byte *value
-            );
+    );
+
+    bool Set(const std::string &key,
+             long long exptime,
+             long long length,
+             std::byte *value
+    );
 
     bool Delete(const std::string &key);
 
     bool Has(const std::string &key);
+
+    std::string Get(const std::string &key);
+
+    long long GetLifetime(const std::string &key);
 
 private:
     std::vector<HashNode *> table;

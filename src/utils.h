@@ -1,5 +1,5 @@
 //
-// Created by vladimir on 27.04.19.
+// Created by dmitry on 27.04.19.
 //
 
 #ifndef TECELASQL_UTILS_H
@@ -27,8 +27,6 @@ class InvalidTextLineException: public std::exception{
     }
 };
 
-
-
-//HashTable *pTable = nullptr;
+HashTable *pTable = nullptr;
 
 #endif //TECELASQL_UTILS_H

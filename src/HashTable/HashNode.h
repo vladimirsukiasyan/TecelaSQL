@@ -1,5 +1,5 @@
 //
-// Created by vladimir on 15.04.19.
+// Created by dmitry on 05.05.19.
 //
 
 #ifndef TECELASQL_HASHNODE_H
@@ -8,21 +8,21 @@
 #include <cstddef>
 #include <string>
 
-class HashNode
-{
+class HashNode {
 public:
     HashNode() : next(nullptr) {}
+
     HashNode(std::string key, long long exptime, long long length, std::byte *value, HashNode *next)
             : key(std::move(key)),
               exptime(exptime),
               length(length),
               value(value),
-              next(next)
-              {}
+              next(next) {}
+
     std::string key;
     long long exptime;
     long long length;
-    std::byte * value;
+    std::byte *value;
     HashNode *next;
 };
 

@@ -27,7 +27,7 @@ void Query::parseHeadLine(const std::string &headBuffer) {
             throw InvalidTextLineException();
         }
 
-        command=GetCommand();
+        command=new GetCommand(tokens[0],client_socket);
     }
     else if(command_string == "add") {
         method=METHOD::ADD;
@@ -49,7 +49,7 @@ void Query::parseHeadLine(const std::string &headBuffer) {
         if(sz1!=tokens[2].size() || sz2!=tokens[3].size())
             throw InvalidTextLineException();
 
-        command=new AddCommand(tokens[0],exptime,length);
+        command=new AddCommand(tokens[0],exptime,length,client_socket);
         return;
     }
     else if (command_string == "set") {
