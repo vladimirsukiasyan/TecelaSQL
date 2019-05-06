@@ -22,6 +22,12 @@ void Query::parseHeadLine(const std::string &headBuffer) {
 
     if(command_string=="get"){
         method=METHOD::GET;
+
+        if(tokens.size()!=GET_COMMAND_HEADLINE_PARAMS_COUNT){
+            throw InvalidTextLineException();
+        }
+
+        command=GetCommand();
     }
     else if(command_string == "add") {
         method=METHOD::ADD;
@@ -82,4 +88,8 @@ void Query::setCommandValue(const std::string bodyBuffer) {
 //    if(method==METHOD::SET){
 //        ((SetCommand*)command)->setValue((std::byte *) bodyBuffer.c_str());
 //    }
+}
+
+void Query::setSocket(Socket::ptr client_socket) {
+    this->client_socket=client_socket;
 }

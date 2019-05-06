@@ -15,21 +15,22 @@
 #include "../Application/Application.h"
 
 
-class ClientConnection: public std::enable_shared_from_this<ClientConnection> {
+class Socket: public std::enable_shared_from_this<Socket> {
     boost::asio::ip::tcp::socket _sock;
-    enum { max_msg = 1024 };
-    int _already_read;
-    char _buff[max_msg];
+    char _buf[1024];
+    char _sendBuf[1024];
     Application *app;
 
 public:
-    ClientConnection(boost::asio::io_service &io):
-        _sock(io)
-//        app(new Application())
+    typedef std::shared_ptr<Socket> ptr;
+
+    Socket(boost::asio::io_service &io):
+        _sock(io),
+        app(new Application())
         {};
 
-    ~ClientConnection(){
-        std::cout<<"ClientConnectionConnection()"<<std::endl;
+    ~Socket(){
+        std::cout<<"~Socket()"<<std::endl;
         delete app;
     }
 
@@ -37,11 +38,9 @@ public:
         return _sock;
     }
 
-    void client_session();
-
     std::string recv();
 
-    void send(const std::string &response);
+    void send(std::string &response);
 
     void closeConnection();
 

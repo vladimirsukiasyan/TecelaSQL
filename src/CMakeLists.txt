@@ -7,8 +7,8 @@ if(Boost_FOUND)
     add_executable(TecelaSQL
             Server/Server.cpp
             Server/Server.h
-            Socket/ClientConnection.cpp
-            Socket/ClientConnection.h
+            Socket/Socket.cpp
+            Socket/Socket.h
             HashTable/HashTable.h
             Application/Application.cpp
             Application/Application.h

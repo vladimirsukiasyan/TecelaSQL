@@ -10,6 +10,7 @@
 #include "../utils.h"
 #include "../Command/Command.h"
 #include "../Query/Query.h"
+#include "../Socket/Socket.h"
 
 class Application {
 
@@ -33,7 +34,7 @@ public:
         delete query;
         delete command;
     }
-    void requestHandler(const std::string&);
+    void requestHandler(Socket::ptr client_socket);
 };
 
 
