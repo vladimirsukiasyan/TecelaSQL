@@ -40,7 +40,7 @@ void Query::parseHeadLine(const std::string &headBuffer) {
         if(sz1!=tokens[2].size() || sz2!=tokens[3].size())
             throw InvalidTextLineException();
 
-        command=new AddCommand(tokens[0],exptime,length);
+        command=new AddCommand(tokens[0],exptime,length,);
         return;
     }
     else if (command_string == "set") {
