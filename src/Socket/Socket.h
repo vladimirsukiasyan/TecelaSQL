@@ -5,26 +5,36 @@
 #ifndef TECELASQL_SOCKET_H
 #define TECELASQL_SOCKET_H
 
-
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
+#include <boost/function.hpp>
+#include <iostream>
 #include <string>
 
-class Socket {
+class Socket : public std::enable_shared_from_this<Socket> {
 public:
-    Socket();
+    typedef boost::function<void(const boost::system::error_code &, size_t)> callback_function;
+    typedef std::shared_ptr<Socket> ptr;
 
-    Socket(int sd): _sd(sd){}
+    explicit Socket(boost::asio::io_service &io);
 
     ~Socket();
 
-    std::string recv();
+    boost::asio::ip::tcp::socket &sock();
 
-    void send(std::string&);
+    void recv(callback_function &callback_func);
 
-    void close();
+    void send(const std::string &response);
+
+    void setResponseCallbackFunc(callback_function &callback_func);
+
+    char _readBuf[1024];
 
 private:
-     int _sd;
-};
+    boost::asio::ip::tcp::socket _sock;
 
+    callback_function _responseCallback;
+
+};
 
 #endif //TECELASQL_SOCKET_H
