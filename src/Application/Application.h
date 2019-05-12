@@ -6,20 +6,44 @@
 #define TECELASQL_APPLICATION_H
 
 
-#include <boost/asio/detail/shared_ptr.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include "../Command/Command.h"
+#include <iostream>
+#include <boost/function.hpp>
+
 #include "../Socket/Socket.h"
+#include "../Command/Command.h"
 #include "../Query/Query.h"
 
-typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;
-
 class Application {
-    Command *command;
-    Query *query;
+
+    Query *_query;
+    Command *_command;
+    Socket::ptr _client_socket;
+
+    void handle_headline(const boost::system::error_code &, size_t);
+
+    void handle_valueline(const boost::system::error_code &, size_t);
+
+    void handle_response(const boost::system::error_code &, size_t);
+
+    Socket::callback_function getCallbackFunction(void(Application::*pFunction)(const boost::system::error_code &error, size_t bytes_transferred));
 
 public:
-    void request_handler(socket_ptr sock);
+
+    explicit Application(const Socket::ptr &socket):
+            _query(new Query(socket)),
+            _command(nullptr),
+            _client_socket(Socket::ptr(socket))
+    {
+        auto responseCallbackFunc=getCallbackFunction(&Application::handle_response);
+        _client_socket->setResponseCallbackFunc(responseCallbackFunc);
+    }
+
+    ~Application() {
+        delete _query;
+        delete _command;
+    }
+
+    void handle_client();
 };
 
 
