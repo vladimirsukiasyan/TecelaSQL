@@ -1,31 +1,32 @@
+#include <utility>
+
 #ifndef TECELASQL_ADDCOMMAND_H
 #define TECELASQL_ADDCOMMAND_H
 
 #include <iostream>
-#include "../Command.h"
 #include <mutex>
-#include "../../Socket/Socket.h"
 
-typedef std::shared_ptr<Socket> socket_ptr;
+#include "../Command.h"
+#include "../../Socket/Socket.h"
+#include "../../utils.h"
+#include "../../exceptions.h"
 
 class AddCommand : public Command {
 public:
     //инициализация команды
-    AddCommand(std::string &key,
+    AddCommand(std::string key,
                long long exptime,
                long long length,
-               socket_ptr client_socket
+               Socket::ptr &client_socket
     ) :
-            key(key),
+            key(std::move(key)),
             exptime(exptime),
             length(length),
             value(nullptr),
-            client_socket(client_socket) {
-        std::cout << "AddCommand()" << std::endl;
-    }
+            client_socket(Socket::ptr(client_socket))
+    {}
 
     ~AddCommand() {
-        std::cout << "~AddCommand()" << std::endl;
         delete value;
     }
 
@@ -40,7 +41,9 @@ private:
     long long exptime;
     long long length;
     std::byte *value;
-    socket_ptr client_socket;
+    Socket::ptr client_socket;
+
+    std::recursive_mutex _mx;
 };
 
 

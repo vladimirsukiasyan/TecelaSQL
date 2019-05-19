@@ -6,13 +6,13 @@
 
 void SetCommand::execute() {
     std::mutex mx_;
-    std::lock_guard<std::mutex> lock(mx_);
+    std::lock_guard<std::recursive_mutex> lock(_mx);
     bool success = pTable->Set(this->key, this->exptime, this->length, this->value);
     if (success) {
         std::string s = "Успешно";
         client_socket->send(s);
     } else
-        throw InvalidTextLineException();
+        throw InvalidHeadLineException();
 
 };
 
@@ -21,4 +21,8 @@ std::string SetCommand::toStr() {
             "Set " + this->key + " " + std::to_string(this->exptime) + " " + std::to_string(this->length) + " " +
             (char *) this->value;
     return answer;
+}
+
+void SetCommand::setValue(std::byte *value) {
+    this->value=value;
 }

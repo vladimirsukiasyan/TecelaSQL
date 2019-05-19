@@ -19,11 +19,34 @@ public:
               value(value),
               next(next) {}
 
+
+    const std::string &getKey() {
+        return key;
+    }
+
+    bool isDel() const {
+        return del;
+    }
+
+    void setDel() {
+        del = true;
+    }
+
+    void setNotDel() {
+        del = false;
+    }
+
+    void setKey(const std::string &elem) {
+        key = elem;
+    }
+
+private:
     std::string key;
     long long exptime;
     long long length;
     std::byte *value;
     HashNode *next;
+    bool del;
 };
 
 #endif //TECELASQL_HASHNODE_H

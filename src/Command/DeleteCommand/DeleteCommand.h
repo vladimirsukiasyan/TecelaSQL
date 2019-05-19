@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by vladimir on 14.04.19.
 //
@@ -5,27 +7,29 @@
 #ifndef TECELASQL_DELETECOMMAND_H
 #define TECELASQL_DELETECOMMAND_H
 
-#include <string>
 #include <mutex>
-#include "../../Socket/Socket.h"
-#include "../Command.h"
 
-typedef std::shared_ptr<Socket> socket_ptr;
+#include "../Command.h"
+#include "../../Socket/Socket.h"
+#include "../../utils.h"
+#include "../../exceptions.h"
+
 
 class DeleteCommand : public Command {
-    DeleteCommand(const std::string &key,
-                  socket_ptr client_socket
-    ) :
-            key(key),
-            client_socket(client_socket) {};
 public:
+    DeleteCommand(std::string key,
+                  Socket::ptr &client_socket
+    ) :
+            key(std::move(key)),
+            client_socket(Socket::ptr(client_socket)) {};
+
     std::string toStr();
 
     void execute() override;
 
 private:
     const std::string key;
-    socket_ptr client_socket;
+    Socket::ptr client_socket;
 };
 
 

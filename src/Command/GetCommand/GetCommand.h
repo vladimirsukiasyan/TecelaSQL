@@ -1,32 +1,39 @@
+#include <utility>
+
 //
 // Created by vladimir on 14.04.19.
 //
 
-
 #ifndef TECELASQL_GETCOMMAND_H
 #define TECELASQL_GETCOMMAND_H
 
-#include "../Command.h"
-#include "../../Socket/Socket.h"
 #include <mutex>
-
-typedef std::shared_ptr<Socket> socket_ptr;
+#include "../Command.h"
+#include "../../utils.h"
+#include "../../exceptions.h"
+#include "../../Socket/Socket.h"
 
 class GetCommand : public Command {
 public:
     //инициализация команды
-    GetCommand(std::string &key,
-               socket_ptr client_socket)
-            : key(key),
-              client_socket(client_socket) {}
+    GetCommand(std::string key,
+               const Socket::ptr &client_socket
+    ) :
+            key(std::move(key)),
+            client_socket(Socket::ptr(client_socket)) {
 
-    std::string toStr();
+    }
 
     void execute() override;
 
+    std::string toStr();
+
 private:
     const std::string key;
-    socket_ptr client_socket;
+    Socket::ptr client_socket;
+
+    std::recursive_mutex _mx;
+
 };
 
 

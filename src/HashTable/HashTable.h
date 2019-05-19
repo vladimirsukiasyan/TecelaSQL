@@ -11,18 +11,27 @@
 #include <map>
 #include "HashNode.h"
 #include <iostream>
+#include "../utils.h"
 
 const size_t DEFAULT_SIZE = 8;
+const size_t DEFAULT_LENGTH = 1024;
 
-size_t Hash(const std::string &s, size_t size);
+size_t Hash1(const std::string &s, size_t size);
+
+size_t Hash2(const std::string &s, size_t size);
+
+size_t DoubleHash(size_t h1, size_t h2, size_t i, size_t size);
 
 class HashTable {
 public:
-    explicit HashTable(size_t size = DEFAULT_SIZE)
-            : table(size, nullptr), size(0) {}
+    explicit HashTable(size_t size = DEFAULT_SIZE, size_t sizeBuffer = DEFAULT_LENGTH)
+            : size(0), sizeBuffer(1024) {
+        table = new HashNode[sizeBuffer];
+    }
 
     ~HashTable() {
-        //
+        for (int i = 0; i < size; i++)
+            delete table[i];
     }
 
     bool Add(const std::string &key,
@@ -46,8 +55,9 @@ public:
     long long GetLifetime(const std::string &key);
 
 private:
-    std::vector<HashNode *> table;
+    HashNode *table;
     size_t size;
+    size_t sizeBuffer;
 };
 
 #endif //TECELASQL_HASHTABLE_H

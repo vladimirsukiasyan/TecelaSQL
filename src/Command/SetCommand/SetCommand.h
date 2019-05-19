@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by vladimir on 14.04.19.
 //
@@ -5,36 +7,34 @@
 #ifndef TECELASQL_SETCOMMAND_H
 #define TECELASQL_SETCOMMAND_H
 
-#include "../Command.h"
-#include "../../Socket/Socket.h"
 #include <mutex>
 
-typedef std::shared_ptr<Socket> socket_ptr;
+#include "../Command.h"
+#include "../../Socket/Socket.h"
+#include "../../utils.h"
+#include "../../exceptions.h"
 
 class SetCommand : public Command {
+public:
     //инициализация команды
-    SetCommand(std::string &key,
+    SetCommand(std::string key,
                long long exptime,
                long long length,
-               socket_ptr client_socket
+               Socket::ptr &client_socket
     ) :
-            key(key),
+            key(std::move(key)),
             exptime(exptime),
             length(length),
             value(nullptr),
-            client_socket(client_socket) {
-        std::cout << "SetCommand" << std::endl;
-    }
+            client_socket(Socket::ptr (client_socket))
+    {}
 
 
     ~SetCommand() {
-        std::cout << "~SetCommand" << std::endl;
         delete value;
     }
 
     void execute() override;
-
-public:
     std::string toStr();
 
     void setValue(std::byte *value);
@@ -44,7 +44,10 @@ private:
     long long exptime;
     long long length;
     std::byte *value;
-    socket_ptr client_socket;
+    Socket::ptr client_socket;
+
+    std::recursive_mutex _mx;
+
 };
 
 #endif //TECELASQL_SETCOMMAND_H

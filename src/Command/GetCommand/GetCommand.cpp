@@ -5,11 +5,12 @@
 #include "GetCommand.h"
 
 void GetCommand::execute() {
-    std::mutex mx_;
-    std::lock_guard<std::mutex> lock(mx_);
+    std::lock_guard<std::recursive_mutex> lock(_mx);
+
     std::string answer = pTable->Get(this->key);
+
     if (answer == "error")
-        throw InvalidTextLineException();
+        throw InvalidHeadLineException();
     else
         client_socket->send(answer);
 }

@@ -12,7 +12,7 @@ void DeleteCommand::execute() {
         std::string s = "Успешно удалено";
         client_socket->send(s);
     } else
-        throw InvalidTextLineException();
+        throw InvalidHeadLineException();
 }
 
 std::string DeleteCommand::toStr() {
