@@ -7,8 +7,7 @@
 void SetCommand::execute() {
     std::mutex mx_;
     std::lock_guard<std::recursive_mutex> lock(_mx);
-    bool success = pTable->Set(this->key, this->exptime, this->length, this->value);
-    if (success) {
+    if (pTable->Set(this->key, this->exptime, this->length, this->value) == ERRORS::SUCCESS) {
         std::string s = "Успешно";
         client_socket->send(s);
     } else
@@ -24,5 +23,5 @@ std::string SetCommand::toStr() {
 }
 
 void SetCommand::setValue(std::byte *value) {
-    this->value=value;
+    this->value = value;
 }

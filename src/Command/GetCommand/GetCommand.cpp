@@ -7,9 +7,8 @@
 void GetCommand::execute() {
     std::lock_guard<std::recursive_mutex> lock(_mx);
 
-    std::string answer = pTable->Get(this->key);
-
-    if (answer == "error")
+    std::string &answer;
+    if (pTable->Get(this->key, answer) == ERRORS::SUCCESS)
         throw InvalidHeadLineException();
     else
         client_socket->send(answer);

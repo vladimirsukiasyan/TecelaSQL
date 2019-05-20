@@ -7,8 +7,7 @@
 void DeleteCommand::execute() {
     std::mutex mx_;
     std::lock_guard<std::mutex> lock(mx_);
-    bool success = pTable->Delete(this->key);
-    if (success) {
+    if (pTable->Delete(this->key) == ERRORS::SUCCESS){
         std::string s = "Успешно удалено";
         client_socket->send(s);
     } else

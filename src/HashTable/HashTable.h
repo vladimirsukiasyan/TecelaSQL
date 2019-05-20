@@ -34,23 +34,23 @@ public:
             delete table[i];
     }
 
-    bool Add(const std::string &key,
+    enum ERRORS Add(const std::string &key,
              long long exptime,
              long long length,
              std::byte *value
     );
 
-    bool Set(const std::string &key,
+    enum ERRORS Set(const std::string &key,
              long long exptime,
              long long length,
              std::byte *value
     );
 
-    bool Delete(const std::string &key);
+    enum ERRORS Delete(const std::string &key);
 
-    bool Has(const std::string &key);
+    enum ERRORS Has(const std::string &key);
 
-    std::string Get(const std::string &key);
+    enum ERRORS Get(const std::string &key, std::string &value);
 
     long long GetLifetime(const std::string &key);
 

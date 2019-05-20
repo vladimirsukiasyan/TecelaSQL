@@ -5,7 +5,7 @@
 #ifndef TECELASQL_UTILS_H
 #define TECELASQL_UTILS_H
 
-enum class ERORRS{
+enum class ERRORS{
     SUCCESS,
     NOTFOUND
 };
