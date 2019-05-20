@@ -1,11 +1,16 @@
 //
-// Created by dmitry on 27.04.19.
+// Created by dmitry on 19.05.19.
 //
 
 #ifndef TECELASQL_UTILS_H
 #define TECELASQL_UTILS_H
 
 #include "HashTable/HashTable.h"
+
+enum class ERRORS {
+    SUCCESS,
+    NOTFOUND
+};
 
 enum class METHOD {
     GET,

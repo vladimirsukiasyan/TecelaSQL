@@ -1,22 +1,49 @@
-//
-// Created by vladimir on 14.04.19.
-//
+#include <utility>
 
 #ifndef TECELASQL_ADDCOMMAND_H
 #define TECELASQL_ADDCOMMAND_H
 
-#include "../Command.h"
+#include <iostream>
+#include <mutex>
 
-class AddCommand: public Command{
+#include "../Command.h"
+#include "../../Socket/Socket.h"
+#include "../../utils.h"
+#include "../../exceptions.h"
+
+class AddCommand : public Command {
 public:
-    AddCommand(std::map<std::string, std::string> params){
-        //инициализация команды
+    //инициализация команды
+    AddCommand(std::string key,
+               long long exptime,
+               long long length,
+               Socket::ptr &client_socket
+    ) :
+            key(std::move(key)),
+            exptime(exptime),
+            length(length),
+            value(nullptr),
+            client_socket(Socket::ptr(client_socket))
+    {}
+
+    ~AddCommand() {
+        delete value;
     }
 
     void execute() override;
 
+    void setValue(std::byte *value);
+
+    std::string toStr();
+
 private:
-    std::map<std::string,std::string> params;
+    const std::string key;
+    long long exptime;
+    long long length;
+    std::byte *value;
+    Socket::ptr client_socket;
+
+    std::recursive_mutex _mx;
 };
 
 
