@@ -6,15 +6,17 @@
 
 void GetCommand::execute() {
     std::lock_guard<std::recursive_mutex> lock(_mx);
-
-    std::string &answer;
-    if (pTable->Get(this->key, answer) == ERRORS::SUCCESS)
+    ERRORS errors;
+    std::string answer = pTable->Get(this->key, errors);
+    if (errors != ERRORS::SUCCESS) {
         throw InvalidHeadLineException();
+    }
     else
         client_socket->send(answer);
 }
 
 std::string GetCommand::toStr() {
-    std::string answer = "Get " + pTable->Get(this->key);
+    ERRORS errors;
+    std::string answer = "Get " + pTable->Get(this->key, errors);
     return answer;
 }

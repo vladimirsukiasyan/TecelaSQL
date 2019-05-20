@@ -7,11 +7,6 @@
 
 #include "HashTable/HashTable.h"
 
-enum class ERRORS {
-    SUCCESS,
-    NOTFOUND
-};
-
 enum class METHOD {
     GET,
     ADD,

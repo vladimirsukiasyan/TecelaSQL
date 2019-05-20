@@ -6,7 +6,9 @@
 
 void AddCommand::execute() {
     std::lock_guard<std::recursive_mutex> lock(_mx);
-    if (pTable->Add(this->key, this->exptime, this->length, this->value) == ERRORS::SUCCESS) {
+    ERRORS errors;
+    pTable->Add(this->key, this->exptime, this->length, this->value, errors);
+    if (errors == ERRORS::SUCCESS) {
         // Вызвать setTimer Cachmanager
         std::string s = "Добавление успешно!";
         client_socket->send(s);

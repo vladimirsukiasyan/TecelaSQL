@@ -7,7 +7,9 @@
 void SetCommand::execute() {
     std::mutex mx_;
     std::lock_guard<std::recursive_mutex> lock(_mx);
-    if (pTable->Set(this->key, this->exptime, this->length, this->value) == ERRORS::SUCCESS) {
+    ERRORS errors;
+    pTable->Set(this->key, this->exptime, this->length, this->value, errors);
+    if (errors == ERRORS::SUCCESS) {
         std::string s = "Успешно";
         client_socket->send(s);
     } else

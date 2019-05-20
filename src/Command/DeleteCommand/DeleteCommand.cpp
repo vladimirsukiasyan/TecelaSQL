@@ -7,7 +7,9 @@
 void DeleteCommand::execute() {
     std::mutex mx_;
     std::lock_guard<std::mutex> lock(mx_);
-    if (pTable->Delete(this->key) == ERRORS::SUCCESS){
+    ERRORS errors;
+    pTable->Delete(this->key, errors);
+    if (errors == ERRORS::SUCCESS){
         std::string s = "Успешно удалено";
         client_socket->send(s);
     } else
@@ -15,6 +17,7 @@ void DeleteCommand::execute() {
 }
 
 std::string DeleteCommand::toStr() {
-    std::string answer = "Del " + pTable->Get(this->key);
+    ERRORS errors;
+    std::string answer = "Del " + pTable->Get(this->key, errors);
     return answer;
 }

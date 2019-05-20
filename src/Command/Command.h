@@ -9,10 +9,12 @@
 #include <utility>
 #include <cstddef>
 #include "../utils.h"
+#include "../codeErrors.h"
 
 class Command {
 public:
     virtual void execute() = 0;
+
     Command() = default;
 };
 
