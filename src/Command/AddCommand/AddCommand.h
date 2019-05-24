@@ -42,7 +42,6 @@ private:
     long long length;
     std::byte *value;
     Socket::ptr client_socket;
-
     std::recursive_mutex _mx;
 };
 
