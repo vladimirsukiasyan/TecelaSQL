@@ -98,9 +98,9 @@ std::string HashTable::Get(const std::string &key, ERRORS &errors) {
     while (_table[hash] != nullptr && i < _capacity) {
         if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED") {
             errors = ERRORS::SUCCESS;
-             return "Key: " + _table[hash]->getKey() + " length: " + std::to_string(_table[hash]->getLength()) +
-                    " exptime: " +
-                    std::to_string(_table[hash]->getExptime()) + " value: " + (char *) _table[hash]->getValue();
+            return "Key: " + _table[hash]->getKey() + " length: " + std::to_string(_table[hash]->getLength()) +
+                   " exptime: " +
+                   std::to_string(_table[hash]->getExptime()) + " value: " + (char *) _table[hash]->getValue();
         }
         hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;

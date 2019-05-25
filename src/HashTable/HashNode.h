@@ -58,9 +58,6 @@ public:
         return del;
     }
 
-    void setDel(bool del) {
-        HashNode::del = del;
-    }
 
 private:
     long long exptime;

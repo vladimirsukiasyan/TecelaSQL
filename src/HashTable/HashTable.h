@@ -44,17 +44,17 @@ public:
     }
 
     void Add(const std::string &key,
-               long long exptime,
-               long long length,
-               std::byte *value,
-               ERRORS &errors
+             long long exptime,
+             long long length,
+             std::byte *value,
+             ERRORS &errors
     );
 
     void Set(const std::string &key,
-               long long exptime,
-               long long length,
-               std::byte *value,
-               ERRORS &errors
+             long long exptime,
+             long long length,
+             std::byte *value,
+             ERRORS &errors
     );
 
     void Delete(const std::string &key, ERRORS &errors);

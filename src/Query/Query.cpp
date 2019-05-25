@@ -110,7 +110,7 @@ void Query::parseHeadLine(const std::string &headBuffer) {
     else if (command_string == "disconnect") {
         method = METHOD::DISCONNECT;
 
-        //command=new DisconnetCommand(client_socket);
+       // command=new DisconnetCommand(client_socket);
     }
 
     else throw InvalidHeadLineException();
