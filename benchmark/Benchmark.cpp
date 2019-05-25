@@ -6,10 +6,15 @@ void ServerBenchmark::connect(const ip::tcp::endpoint &ep) {
 
 void ServerBenchmark::loop() {
     write();
-    while (true) {
+    auto start = std::chrono::system_clock::now();
+    for (int i = 0; i < 100000; ++i) {
         get_request();
         read_answer();
     }
+    auto end = std::chrono::system_clock::now();
+    auto elapsed = end - start;
+    float rpm = elapsed.count() / 100000;
+    std::cout << std::setprecision(16) << rpm << " - запросов в секунду" << std::endl;
     del_request();
 }
 
@@ -19,15 +24,16 @@ void ServerBenchmark::get_request() {
     sock_.write_some(buffer(query));
 }
 
-void ServerBenchmark::del_request(){
+void ServerBenchmark::del_request() {
     std::string query;
     query = "del 12";
     sock_.write_some(buffer(query));
 }
+
 void ServerBenchmark::read_answer() {
     size_t bytes_transferred = sock_.read_some(buffer(buff_));
     std::string response(buff_, bytes_transferred);
-    std::cout << response << std::endl;
+    //std::cout << response << std::endl;
 }
 
 void ServerBenchmark::write() {
@@ -35,8 +41,7 @@ void ServerBenchmark::write() {
     query = "add 12 100 10";
     sock_.write_some(buffer(query));
     query = "0123456789";
-    buffer(query);
-    std::cout << "Успешное добавление";
+    sock_.write_some(buffer(query));
 }
 
 void run_client() {
@@ -51,10 +56,9 @@ void run_client() {
 }
 
 int main() {
-    boost::asio::thread_pool pool(8);
-    for (int i = 0; i < 8; i++)
+    boost::asio::thread_pool pool(4);
+    for (int i = 0; i < 4; i++)
         boost::asio::post(pool, [=] { run_client(); });
     pool.join();
-    run_client();
     return 0;
 };

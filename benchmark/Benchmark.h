@@ -8,7 +8,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <iostream>
-
+#include <ctime>
 using namespace boost::asio;
 
 ip::tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 12000);
