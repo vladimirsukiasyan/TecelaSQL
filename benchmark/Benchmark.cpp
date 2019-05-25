@@ -5,15 +5,14 @@ void ServerBenchmark::connect(const ip::tcp::endpoint &ep) {
 }
 
 void ServerBenchmark::loop() {
-    write();
     auto start = std::chrono::system_clock::now();
-    for (int i = 0; i < 100000; ++i) {
+    for (int i = 0; i < 1000000; ++i) {
         get_request();
         read_answer();
     }
     auto end = std::chrono::system_clock::now();
     auto elapsed = end - start;
-    float rpm = elapsed.count() / 100000;
+    float rpm = elapsed.count() / 1000000;
     std::cout << std::setprecision(16) << rpm << " - запросов в секунду" << std::endl;
     del_request();
 }
@@ -36,11 +35,15 @@ void ServerBenchmark::read_answer() {
     //std::cout << response << std::endl;
 }
 
-void ServerBenchmark::write() {
+void ServerBenchmark::write_command() {
     std::string query;
-    query = "add 12 100 10";
+    query = "add 12 100 5";
     sock_.write_some(buffer(query));
-    query = "0123456789";
+}
+
+void ServerBenchmark::write_value() {
+    std::string query;
+    query = "value";
     sock_.write_some(buffer(query));
 }
 
@@ -48,6 +51,8 @@ void run_client() {
     ServerBenchmark client;
     try {
         client.connect(ep);
+        client.write_command();
+        client.write_value();
         client.loop();
     }
     catch (boost::system::system_error &err) {

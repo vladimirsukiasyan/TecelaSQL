@@ -26,7 +26,9 @@ struct ServerBenchmark {
 
     void read_answer();
 
-    void write();
+    void write_command();
+    
+    void write_value();
     
     void del_request();
 
