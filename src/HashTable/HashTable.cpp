@@ -4,124 +4,128 @@ const size_t HASH_1 = 11;
 const size_t HASH_2 = 17;
 const double MAX_ALPHA = 0.75;
 
-enum ERRORS HashTable::Has(const std::string &key) {
-    size_t hash1 = Hash1(key, sizeBuffer);
-    size_t hash2 = Hash2(key, sizeBuffer);
-    size_t hash = DoubleHash(hash1, hash2, 0, sizeBuffer);
+void HashTable::Has(const std::string &key, ERRORS &errors) {
+    size_t hash1 = Hash1(key, _capacity);
+    size_t hash2 = Hash2(key, _capacity);
+    size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
     int i = 0;
-    while (table[hash] != nullptr && i < sizeBuffer) {
-        if (table[hash]->getKey() == key && !table[hash]->isDel()) {
-            return ERRORS::SUCCESS;
+    while (_table[hash] != nullptr && i < _capacity) {
+        if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED") {
+            errors = ERRORS::SUCCESS;
         }
 
-        hash = DoubleHash(hash1, hash2, i + 1, sizeBuffer);
+        hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
 
-    return ERRORS::NOTFOUND;
+    errors = ERRORS::NOTFOUND;
 }
 
-enum ERRORS HashTable::Add(const std::string &key,
-                           long long exptime,
-                           long long length,
-                           std::byte *value) {
+void HashTable::Add(const std::string &key,
+                    long long exptime,
+                    long long length,
+                    std::byte *value,
+                    ERRORS &errors) {
 
-    size_t hash1 = Hash1(key, sizeBuffer);
-    size_t hash2 = Hash2(key, sizeBuffer);
-    size_t hash = DoubleHash(hash1, hash2, 0, sizeBuffer);
+    size_t hash1 = Hash1(key, _capacity);
+    size_t hash2 = Hash2(key, _capacity);
+    size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
     int firstD = -1,
             i = 0;
-    while (table[hash] != nullptr && i < sizeBuffer) {
-        if (table[hash]->getKey() == key && !table[hash]->isDel())
-            return ERRORS::NOTFOUND;
-        if (table[hash]->isDel() && firstD < 0)
+    while (_table[hash] != nullptr && i < _capacity) {
+        if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED")
+            errors = ERRORS::NOTFOUND;
+        if (_table[hash]->isDel() && firstD < 0)
             firstD = hash;
-        hash = DoubleHash(hash1, hash2, i + 1, sizeBuffer);
+        hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
     if (firstD < 0) {
-        table[hash] = new HashNode(key,
-                                   exptime,
-                                   length,
-                                   value,
-                                   table[hash]);
+        _table[hash] = new HashNode(key,
+                                    exptime,
+                                    length,
+                                    value,
+                                    _table[hash]);
     } else {
-        table[firstD]->setKey(key);
-        table[firstD]->setNotDel();
+        _table[firstD]->setKey(key);
     }
-    size++;
-    return ERRORS::SUCCESS;
+    errors = ERRORS::SUCCESS;
 }
 
-enum ERRORS HashTable::Delete(const std::string &key) {
-    size_t hash1 = Hash1(key, sizeBuffer);
-    size_t hash2 = Hash2(key, sizeBuffer);
-    size_t hash = DoubleHash(hash1, hash2, 0, sizeBuffer);
+void HashTable::Delete(const std::string &key, ERRORS &errors) {
+    size_t hash1 = Hash1(key, _capacity);
+    size_t hash2 = Hash2(key, _capacity);
+    size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
     int i = 0;
-    while (table[hash] != nullptr && i < sizeBuffer) {
-        if (table[hash]->getKey() == elem && !table[hash]->isDel()) {
-            table[hash]->setDel();
-            size--;
-            return ERRORS::SUCCESS;
+    while (_table[hash] != nullptr && i < _capacity) {
+        if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED") {
+            HashNode *node = new HashNode();
+            node->setKey("DELETED");
+            delete _table[hash];
+            _table[hash] = node;
+            errors = ERRORS::SUCCESS;
         }
-        hash = DoubleHash(hash1, hash2, i + 1, sizeBuffer);
+        hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
 
-    return ERRORS::NOTFOUND;
+    errors = ERRORS::NOTFOUND;
 }
 
-enum ERRORS HashTable::GetLifetime(const std::string &key, long long &value) {
-    size_t hash1 = Hash1(key, sizeBuffer);
-    size_t hash2 = Hash2(key, sizeBuffer);
-    size_t hash = DoubleHash(hash1, hash2, 0, sizeBuffer);
+long long  HashTable::GetLifetime(const std::string &key, ERRORS &errors) {
+    size_t hash1 = Hash1(key, _capacity);
+    size_t hash2 = Hash2(key, _capacity);
+    size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
     int i = 0;
-    while (table[hash] != nullptr && i < sizeBuffer) {
-        if (table[hash]->getKey() == key && !table[hash]->isDel()) {
-            value = table[hash]->exptime;
-            return ERRORS::SUCCESS;
+    while (_table[hash] != nullptr && i < _capacity) {
+        if (_table[hash]->getKey() == key && !_table[hash]->isDel()) {
+            errors = ERRORS::SUCCESS;
+            return  _table[hash]->getExptime();
+
         }
-        hash = DoubleHash(hash1, hash2, i + 1, sizeBuffer);
+        hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
 
-    return ERRORS::NOTFOUND;
+    errors = ERRORS::NOTFOUND;
 }
-
-enum ERRORS HashTable::Get(const std::string &key, std::string &value) {
-    size_t hash1 = Hash1(key, sizeBuffer);
-    size_t hash2 = Hash2(key, sizeBuffer);
-    size_t hash = DoubleHash(hash1, hash2, 0, sizeBuffer);
+//TODO Вукидывать exception во всем HashTable
+std::string HashTable::Get(const std::string &key, ERRORS &errors) {
+    size_t hash1 = Hash1(key, _capacity);
+    size_t hash2 = Hash2(key, _capacity);
+    size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
     int i = 0;
-    while (table[hash] != nullptr && i < sizeBuffer) {
-        if (table[hash]->getKey() == key && !table[hash]->isDel()) {
-            value = "Key: " + table[hash]->key + " length: " + std::to_string(table[hash]->length) + " exptime: " +
-                    std::to_string(table[hash]->exptime) + " value: " + (char *) table[hash]->value;
-            return ERRORS::SUCCESS;
+    while (_table[hash] != nullptr && i < _capacity) {
+        if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED") {
+            errors = ERRORS::SUCCESS;
+            return "Key: " + _table[hash]->getKey() + " length: " + std::to_string(_table[hash]->getLength()) +
+                   " exptime: " +
+                   std::to_string(_table[hash]->getExptime()) + " value: " + (char *) _table[hash]->getValue();
         }
-        hash = DoubleHash(hash1, hash2, i + 1, sizeBuffer);
+        hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
-    return ERRORS::NOTFOUND;
+    errors = ERRORS ::NOTFOUND;
+    return "";
 }
 
-enum ERRORS HashTable::Set(const std::string &key, long long exptime, long long length, std::byte *value) {
-    size_t hash1 = Hash1(key, sizeBuffer);
-    size_t hash2 = Hash2(key, sizeBuffer);
-    size_t hash = DoubleHash(hash1, hash2, 0, sizeBuffer);
+void HashTable::Set(const std::string &key, long long exptime, long long length, std::byte *value, ERRORS &errors) {
+    size_t hash1 = Hash1(key, _capacity);
+    size_t hash2 = Hash2(key, _capacity);
+    size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
     int i = 0;
-    while (table[hash] != nullptr && i < sizeBuffer) {
-        if (table[hash]->getKey() == key && !table[hash]->isDel()) {
-            table[hash]->key = key;
-            table[hash]->length = length;
-            table[hash]->exptime = exptime;
-            table[hash]->value = value;
-            return ERRORS::SUCCESS;
+    while (_table[hash] != nullptr && i < _capacity) {
+        if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED") {
+            _table[hash]->setKey(key);
+            _table[hash]->setLength(length);
+            _table[hash]->setExptime(exptime);
+            _table[hash]->setValue(value);
+            errors = ERRORS::SUCCESS;
         }
-        hash = DoubleHash(hash1, hash2, i + 1, sizeBuffer);
+        hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
-    return ERRORS::NOTFOUND;
+    errors = ERRORS::NOTFOUND;
 
 }
 

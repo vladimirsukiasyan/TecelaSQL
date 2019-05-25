@@ -19,11 +19,6 @@ enum class METHOD {
     FLUSH_ALL
 };
 
-enum class ERRORS{
-    SUCCESS,
-    NOTFOUND
-};
-
 extern HashTable *pTable;
 
 #endif //TECELASQL_UTILS_H

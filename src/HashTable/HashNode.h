@@ -19,29 +19,47 @@ public:
               value(value),
               next(next) {}
 
-
-    const std::string &getKey() {
+private:
+    std::string key;
+public:
+    const std::string &getKey() const {
         return key;
+    }
+
+    void setKey(const std::string &key) {
+        HashNode::key = key;
+    }
+
+    long long int getExptime() const {
+        return exptime;
+    }
+
+    void setExptime(long long int exptime) {
+        HashNode::exptime = exptime;
+    }
+
+    long long int getLength() const {
+        return length;
+    }
+
+    void setLength(long long int length) {
+        HashNode::length = length;
+    }
+
+    std::byte *getValue() const {
+        return value;
+    }
+
+    void setValue(std::byte *value) {
+        HashNode::value = value;
     }
 
     bool isDel() const {
         return del;
     }
 
-    void setDel() {
-        del = true;
-    }
-
-    void setNotDel() {
-        del = false;
-    }
-
-    void setKey(const std::string &elem) {
-        key = elem;
-    }
 
 private:
-    std::string key;
     long long exptime;
     long long length;
     std::byte *value;
