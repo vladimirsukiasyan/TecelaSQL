@@ -1,5 +1,5 @@
 //
-// Created by dmitry on 27.04.19.
+// Created by dmitry on 19.05.19.
 //
 
 #ifndef TECELASQL_UTILS_H
@@ -17,6 +17,11 @@ enum class METHOD {
     DISCONNECT,
     TOUCH,
     FLUSH_ALL
+};
+
+enum class ERRORS{
+    SUCCESS,
+    NOTFOUND
 };
 
 extern HashTable *pTable;
