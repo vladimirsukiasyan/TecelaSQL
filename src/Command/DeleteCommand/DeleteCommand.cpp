@@ -4,17 +4,21 @@
 
 #include "DeleteCommand.h"
 
-void DeleteCommand::execute() {
-    std::mutex mx_;
-    std::lock_guard<std::mutex> lock(mx_);
-    if (pTable->Delete(this->key) == ERRORS::SUCCESS){
-        std::string s = "Успешно удалено";
-        client_socket->send(s);
-    } else
-        throw InvalidHeadLineException();
+std::string DeleteCommand::execute() {
+    std::lock_guard<std::recursive_mutex> lock(_mx);
+
+    ERRORS errors;
+    HashTable::getInstance()->Delete(this->key, errors);
+    if (errors == ERRORS::NOT_FOUND){
+        throw NotFoundKeyException();
+    } else{
+        return "DELETED";
+    }
+
 }
 
 std::string DeleteCommand::toStr() {
-    std::string answer = "Del " + pTable->Get(this->key);
-    return answer;
+    //TODO сделай нормально!
+//    std::string answer = "Del " + HashTable::getInstance()->Get(this->key);
+//    return answer;
 }
