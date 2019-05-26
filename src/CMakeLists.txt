@@ -4,6 +4,7 @@ find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 
+#        TODO оформить в виде библиотек
     add_executable(TecelaSQL
             Server/Server.cpp
             Server/Server.h
@@ -22,8 +23,6 @@ if (Boost_FOUND)
             Command/DecrCommand/DecrCommand.h
             Command/DeleteCommand/DeleteCommand.cpp
             Command/DeleteCommand/DeleteCommand.h
-            Command/DisconnectCommand/DisconnetCommand.cpp
-            Command/DisconnectCommand/DisconnetCommand.h
             Command/FlushAllCommand/FlushAllCommand.cpp
             Command/FlushAllCommand/FlushAllCommand.h
             Command/TouchCommand/TouchCommand.cpp
@@ -41,6 +40,10 @@ if (Boost_FOUND)
             ../main.cpp
             utils.h
             exceptions.h
+            Command/GetCommand/GetCommand.cpp Command/GetCommand/GetCommand.h
+            Client/Client.cpp
+            Client/Client.h
             )
+
     target_link_libraries(TecelaSQL ${Boost_LIBRARIES})
 endif ()

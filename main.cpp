@@ -2,6 +2,6 @@
 
 int main(int argc, char **argv) {
     //TODO добавить возможность передачи файла конфигурации сервера
-    //port, poolSize и прочее
+    //_port, _poolSize и прочее
     Server().start();
 }

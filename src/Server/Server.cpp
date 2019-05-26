@@ -8,7 +8,9 @@ HashTable *pTable;
 
 void Server::startAccept() {
 
-    std::shared_ptr<Socket> client(new Socket(_service));
+    //TODO commit as safety memory allocation with creating of shared_ptr
+    Socket::ptr client=std::make_shared<Socket>(_service);
+    //TODO проследить чтобы Socket удалялся, когда клиент закрывает соединение
     _acceptor.async_accept(
             client->sock(),
             boost::bind(
@@ -26,9 +28,7 @@ void Server::handleRequest(Socket::ptr client_socket, const boost::system::error
 
     startAccept();
 
-    std::shared_ptr<Application> client_app(new Application(client_socket));
-    clients.push_back(client_app);
-    client_app->handle_client();
+    app->handle_client(client_socket);
 }
 
 void Server::runAsyncTaskLooping() {
@@ -37,33 +37,38 @@ void Server::runAsyncTaskLooping() {
     _service.run();
 }
 
+
 void Server::start() {
     //парсим конфиг файл
 
     startAccept();
 
-    std::cerr << "listen on port: " << port << std::endl;
+    std::cerr << "listen on _port: " << _port << std::endl;
 
     work_ptr dummy_work(new boost::asio::io_service::work(_service));
-    for (int i = 0; i < poolSize; ++i)
-        thread_group.add_thread(
+    for (int i = 0; i < _poolSize; ++i)
+        _thread_group.add_thread(
                 new boost::thread(std::bind(&Server::runAsyncTaskLooping, this)));
 
-    thread_group.join_all();
+    _thread_group.join_all();
 
 }
 
 Server::Server() : _acceptor(_service),
-                   port(DEFAULT_PORT),
-                   poolSize(DEFAULT_POOL_SIZE) {
-
-    pTable = new HashTable(1024);
+                   _port(DEFAULT_PORT),
+                   _poolSize(DEFAULT_POOL_SIZE),
+                   app(new Application()){
 
     std::cout << "Server()" << std::endl;
-    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
+
+    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), _port);
     _acceptor.open(endpoint.protocol());
     _acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
     _acceptor.bind(endpoint);
     _acceptor.listen(1024);
+}
+
+Server::~Server() {
+    delete app;
 }
 
