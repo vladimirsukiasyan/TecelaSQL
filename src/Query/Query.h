@@ -7,6 +7,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <iostream>
+#include <any>
 
 #include "../Command/Command.h"
 #include "../Command/GetCommand/GetCommand.h"
@@ -17,7 +18,6 @@
 #include "../Command/IncrCommand/IncrCommand.h"
 #include "../Command/DecrCommand/DecrCommand.h"
 #include "../Command/FlushAllCommand/FlushAllCommand.h"
-#include "../Command/DisconnectCommand/DisconnetCommand.h"
 #include "../utils.h"
 
 const int ADD_COMMAND_HEADLINE_PARAMS_COUNT = 4;
@@ -26,12 +26,16 @@ const int GET_COMMAND_HEADLINE_PARAMS_COUNT = 2;
 const int DELETE_COMMAND_HEADLINE_PARAMS_COUNT = 2;
 
 class Query {
-    METHOD method;
+    METHOD _method;
+public:
+    METHOD get_method() const;
+
+private:
     Command *command = nullptr;
-    Socket::ptr client_socket;
+    std::map<std::string,std::any> _params;
 
 public:
-    explicit Query(const Socket::ptr &socket);
+    explicit Query();
 
     ~Query();
 
@@ -39,7 +43,7 @@ public:
 
     void parseHeadLine(const std::string &headBuffer);
 
-    bool hasToSendValueLine();
+    bool hasToSendValueLine() const;
 
     void setCommandValue(const std::string &valueBuffer);
 };

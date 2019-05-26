@@ -7,43 +7,25 @@
 
 
 #include <iostream>
-#include <boost/function.hpp>
+#include <queue>
+#include <thread>
+#include <mutex>
 
 #include "../Socket/Socket.h"
-#include "../Command/Command.h"
-#include "../Query/Query.h"
+#include "../Client/Client.h"
 
 class Application {
 
-    Query *_query;
-    Command *_command;
-    Socket::ptr _client_socket;
-
-    void handle_headline(const boost::system::error_code &, size_t);
-
-    void handle_valueline(const boost::system::error_code &, size_t);
-
-    void handle_response(const boost::system::error_code &, size_t);
-
-    Socket::callback_function getCallbackFunction(void(Application::*pFunction)(const boost::system::error_code &error, size_t bytes_transferred));
+    std::queue<Client*> _clientQueue;
+    std::mutex _mx;
 
 public:
 
-    explicit Application(const Socket::ptr &socket):
-            _query(new Query(socket)),
-            _command(nullptr),
-            _client_socket(Socket::ptr(socket))
-    {
-        auto responseCallbackFunc=getCallbackFunction(&Application::handle_response);
-        _client_socket->setResponseCallbackFunc(responseCallbackFunc);
-    }
+    Application()= default;
 
-    ~Application() {
-        delete _query;
-        delete _command;
-    }
+    ~Application() = default;
 
-    void handle_client();
+    void handle_client(Socket::ptr client_socket);
 };
 
 
