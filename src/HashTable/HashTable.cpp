@@ -4,22 +4,8 @@ const size_t HASH_1 = 11;
 const size_t HASH_2 = 17;
 const double MAX_ALPHA = 0.75;
 
-void HashTable::Has(const std::string &key, ERRORS &errors) {
-    size_t hash1 = Hash1(key, _capacity);
-    size_t hash2 = Hash2(key, _capacity);
-    size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
-    int i = 0;
-    while (_table[hash] != nullptr && i < _capacity) {
-        if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED") {
-            errors = ERRORS::SUCCESS;
-        }
-
-        hash = DoubleHash(hash1, hash2, i + 1, _capacity);
-        i++;
-    }
-
-    errors = ERRORS::NOTFOUND;
-}
+HashTable* volatile HashTable::_instance;
+std::mutex HashTable::_mutex;
 
 void HashTable::Add(const std::string &key,
                     long long exptime,
@@ -30,13 +16,17 @@ void HashTable::Add(const std::string &key,
     size_t hash1 = Hash1(key, _capacity);
     size_t hash2 = Hash2(key, _capacity);
     size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
-    int firstD = -1,
-            i = 0;
+
+    int firstD = -1, i = 0;
     while (_table[hash] != nullptr && i < _capacity) {
-        if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED")
-            errors = ERRORS::NOTFOUND;
-        if (_table[hash]->isDel() && firstD < 0)
+        if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED"){
+            errors = ERRORS::NOT_FOUND;
+        }
+
+        if (_table[hash]->isDel() && firstD < 0){
             firstD = hash;
+        }
+
         hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
@@ -47,9 +37,9 @@ void HashTable::Add(const std::string &key,
                                     value,
                                     _table[hash]);
     } else {
+        //TODO Зачем ты засунул внутри этой функции еще функционл SET???
         _table[firstD]->setKey(key);
     }
-    errors = ERRORS::SUCCESS;
 }
 
 void HashTable::Delete(const std::string &key, ERRORS &errors) {
@@ -59,36 +49,34 @@ void HashTable::Delete(const std::string &key, ERRORS &errors) {
     int i = 0;
     while (_table[hash] != nullptr && i < _capacity) {
         if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED") {
-            HashNode *node = new HashNode();
+            auto *node = new HashNode();
             node->setKey("DELETED");
             delete _table[hash];
             _table[hash] = node;
-            errors = ERRORS::SUCCESS;
         }
         hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
-
-    errors = ERRORS::NOTFOUND;
+    errors = ERRORS::NOT_FOUND;
 }
 
-long long  HashTable::GetLifetime(const std::string &key, ERRORS &errors) {
+long long HashTable::GetLifetime(const std::string &key, ERRORS &errors) {
     size_t hash1 = Hash1(key, _capacity);
     size_t hash2 = Hash2(key, _capacity);
     size_t hash = DoubleHash(hash1, hash2, 0, _capacity);
     int i = 0;
     while (_table[hash] != nullptr && i < _capacity) {
         if (_table[hash]->getKey() == key && !_table[hash]->isDel()) {
-            errors = ERRORS::SUCCESS;
-            return  _table[hash]->getExptime();
+            return _table[hash]->getExptime();
 
         }
         hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
 
-    errors = ERRORS::NOTFOUND;
+    errors = ERRORS::NOT_FOUND;
 }
+
 //TODO Вукидывать exception во всем HashTable
 std::string HashTable::Get(const std::string &key, ERRORS &errors) {
     size_t hash1 = Hash1(key, _capacity);
@@ -97,7 +85,6 @@ std::string HashTable::Get(const std::string &key, ERRORS &errors) {
     int i = 0;
     while (_table[hash] != nullptr && i < _capacity) {
         if (_table[hash]->getKey() == key && _table[hash]->getKey() != "DELETED") {
-            errors = ERRORS::SUCCESS;
             return "Key: " + _table[hash]->getKey() + " length: " + std::to_string(_table[hash]->getLength()) +
                    " exptime: " +
                    std::to_string(_table[hash]->getExptime()) + " value: " + (char *) _table[hash]->getValue();
@@ -105,7 +92,7 @@ std::string HashTable::Get(const std::string &key, ERRORS &errors) {
         hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
-    errors = ERRORS ::NOTFOUND;
+    errors = ERRORS::NOT_FOUND;
     return "";
 }
 
@@ -120,12 +107,11 @@ void HashTable::Set(const std::string &key, long long exptime, long long length,
             _table[hash]->setLength(length);
             _table[hash]->setExptime(exptime);
             _table[hash]->setValue(value);
-            errors = ERRORS::SUCCESS;
         }
         hash = DoubleHash(hash1, hash2, i + 1, _capacity);
         i++;
     }
-    errors = ERRORS::NOTFOUND;
+    errors = ERRORS::NOT_FOUND;
 
 }
 
