@@ -14,6 +14,7 @@
 class Socket : public std::enable_shared_from_this<Socket> {
 public:
     typedef boost::function<void(const boost::system::error_code &, size_t)> callback_function;
+
     typedef std::shared_ptr<Socket> ptr;
 
     explicit Socket(boost::asio::io_service &io);
@@ -22,9 +23,9 @@ public:
 
     boost::asio::ip::tcp::socket &sock();
 
-    void recv(callback_function &callback_func);
+    void async_recv(callback_function &callback_func);
 
-    void send(const std::string &response);
+    void async_send(const std::string &response);
 
     void setResponseCallbackFunc(callback_function &callback_func);
 

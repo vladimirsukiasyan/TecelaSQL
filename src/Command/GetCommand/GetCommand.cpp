@@ -4,17 +4,20 @@
 
 #include "GetCommand.h"
 
-void GetCommand::execute() {
+std::string GetCommand::execute() {
     std::lock_guard<std::recursive_mutex> lock(_mx);
-
-    std::string &answer;
-    if (pTable->Get(this->key, answer) == ERRORS::SUCCESS)
-        throw InvalidHeadLineException();
-    else
-        client_socket->send(answer);
+    ERRORS errors;
+    std::string answer = HashTable::getInstance()->Get(this->key, errors);
+    if (errors == ERRORS::NOT_FOUND) {
+        throw NotFoundKeyException();
+    }
+    else{
+        return answer;
+    }
 }
 
 std::string GetCommand::toStr() {
-    std::string answer = "Get " + pTable->Get(this->key);
+    ERRORS errors;
+    std::string answer = "Get " + HashTable::getInstance()->Get(this->key, errors);
     return answer;
 }

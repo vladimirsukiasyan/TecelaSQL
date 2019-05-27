@@ -28,7 +28,7 @@ struct talk_to_svr {
     void read_answer() {
         size_t bytes_transferred = sock_.read_some(buffer(buff_));
         std::string response(buff_,bytes_transferred);
-        std::cout << response << std::endl;
+        std::cout << "Response: "<<response << std::endl;
     }
 
     void write() {

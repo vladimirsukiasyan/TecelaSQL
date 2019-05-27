@@ -4,15 +4,19 @@
 
 #include "SetCommand.h"
 
-void SetCommand::execute() {
-    std::mutex mx_;
-    std::lock_guard<std::recursive_mutex> lock(_mx);
-    if (pTable->Set(this->key, this->exptime, this->length, this->value) == ERRORS::SUCCESS) {
-        std::string s = "Успешно";
-        client_socket->send(s);
-    } else
-        throw InvalidHeadLineException();
-
+std::string SetCommand::execute() {
+    ERRORS errors;
+    HashTable::getInstance()->Set(this->key, this->exptime, this->length, this->value, errors);
+    if (errors == ERRORS::NOT_FOUND) {
+        throw NotFoundKeyException();
+    }
+    else if(errors == ERRORS::NOT_ENOUGH_MEMORY){
+        throw NotEnoughMemoryException();
+    }
+    else{
+        //CacheManager
+        return "STORED";
+    }
 };
 
 std::string SetCommand::toStr() {
@@ -20,8 +24,4 @@ std::string SetCommand::toStr() {
             "Set " + this->key + " " + std::to_string(this->exptime) + " " + std::to_string(this->length) + " " +
             (char *) this->value;
     return answer;
-}
-
-void SetCommand::setValue(std::byte *value) {
-    this->value = value;
 }

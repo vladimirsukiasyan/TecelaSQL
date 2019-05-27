@@ -10,9 +10,9 @@
 #include <mutex>
 
 #include "../Command.h"
-#include "../../Socket/Socket.h"
-#include "../../utils.h"
 #include "../../exceptions.h"
+#include "../../HashTable/HashTable.h"
+
 
 class SetCommand : public Command {
 public:
@@ -20,31 +20,28 @@ public:
     SetCommand(std::string key,
                long long exptime,
                long long length,
-               Socket::ptr &client_socket
+               std::byte* value
     ) :
             key(std::move(key)),
             exptime(exptime),
             length(length),
-            value(nullptr),
-            client_socket(Socket::ptr (client_socket))
+            value(value)
     {}
 
 
-    ~SetCommand() {
+    ~SetCommand() override {
         delete value;
     }
 
-    void execute() override;
+    std::string execute() override;
     std::string toStr();
 
-    void setValue(std::byte *value);
 
 private:
     const std::string key;
     long long exptime;
     long long length;
     std::byte *value;
-    Socket::ptr client_socket;
 
     std::recursive_mutex _mx;
 

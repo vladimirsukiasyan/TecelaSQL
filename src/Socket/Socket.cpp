@@ -4,14 +4,14 @@
 
 #include "Socket.h"
 
-void Socket::recv(callback_function &callback_func) {
+void Socket::async_recv(callback_function &callback_func) {
     _sock.async_read_some(
             boost::asio::buffer(_readBuf),
             callback_func
     );
 
 }
-void Socket::send(const std::string &response) {
+void Socket::async_send(const std::string &response) {
     std::cout << response << std::endl;
 
     _sock.async_write_some(

@@ -5,8 +5,6 @@
 #ifndef TECELASQL_UTILS_H
 #define TECELASQL_UTILS_H
 
-#include "HashTable/HashTable.h"
-
 enum class METHOD {
     GET,
     ADD,
@@ -18,7 +16,5 @@ enum class METHOD {
     TOUCH,
     FLUSH_ALL
 };
-
-extern HashTable *pTable;
 
 #endif //TECELASQL_UTILS_H

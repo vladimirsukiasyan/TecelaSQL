@@ -23,10 +23,11 @@ typedef std::shared_ptr<boost::asio::io_service::work> work_ptr;
 class Server {
     boost::asio::io_service _service;
     boost::asio::ip::tcp::acceptor _acceptor;
-    boost::thread_group thread_group;
-    std::vector<std::shared_ptr<Application>> clients;
-    int poolSize; //Strongly recommended init by count of kernels
-    int port;
+    boost::thread_group _thread_group;
+
+    Application *app;
+    int _poolSize; //Strongly recommended init by count of kernels
+    int _port;
 
     void handleRequest(Socket::ptr client_socket, const boost::system::error_code &err);
 
@@ -37,9 +38,7 @@ class Server {
 public:
     Server();
 
-    ~Server() {
-        std::cout << "~Server()" << std::endl;
-    }
+    ~Server();
 
     void start();
 };

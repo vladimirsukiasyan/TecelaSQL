@@ -8,12 +8,14 @@
 #include <map>
 #include <utility>
 #include <cstddef>
-#include "../utils.h"
 
 class Command {
 public:
-    virtual void execute() = 0;
+    virtual std::string execute() = 0;
+
     Command() = default;
+
+    virtual ~Command() = default;
 };
 
 

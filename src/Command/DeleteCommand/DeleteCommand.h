@@ -10,26 +10,27 @@
 #include <mutex>
 
 #include "../Command.h"
-#include "../../Socket/Socket.h"
-#include "../../utils.h"
+#include "../../HashTable/HashTable.h"
 #include "../../exceptions.h"
 
 
 class DeleteCommand : public Command {
 public:
-    DeleteCommand(std::string key,
-                  Socket::ptr &client_socket
-    ) :
-            key(std::move(key)),
-            client_socket(Socket::ptr(client_socket)) {};
+    explicit DeleteCommand(std::string key):
+            key(std::move(key))
+            {};
+
+    ~DeleteCommand() override = default;
 
     std::string toStr();
 
-    void execute() override;
+    std::string execute() override;
 
 private:
     const std::string key;
-    Socket::ptr client_socket;
+
+    std::recursive_mutex _mx;
+
 };
 
 
