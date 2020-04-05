@@ -1,0 +1,12 @@
+//
+// Created by dmitry on 20.05.19.
+//
+
+#ifndef TECELASQL_CODEERRORS_H
+#define TECELASQL_CODEERRORS_H
+
+enum ERRORS {
+    NOT_FOUND,
+    NOT_ENOUGH_MEMORY
+};
+#endif //TECELASQL_CODEERRORS_H
